@@ -1,0 +1,19 @@
+# Dart tooling
+.dart_tool/
+.packages
+build/
+
+# Secrets
+.env
+
+# Runtime state (written by the bot, contains member data)
+guild_context.json
+cache/
+logs/
+
+# IDE
+.idea/
+*.iml
+
+# Claude Code local settings
+.claude/
