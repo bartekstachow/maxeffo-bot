@@ -37,28 +37,22 @@ class GuildRepository {
     _members = await _cacheService.load();
     print('[Guild] Cache loaded: ${_members.length} members.');
 
-    // TODO: re-enable fetching when done debugging (see README)
-    // if (_members.isEmpty) {
-    //   print('[Guild] No cache found. Performing initial fetch...');
-    //   await _fetchRosterAndMounts();
-    //   await _refreshLastLogins();
-    // } else {
-    //   _fetchRosterAndMounts().catchError((Object e) {
-    //     print('[Guild] Warning: Background roster refresh failed: $e');
-    //   });
-    //   _refreshLastLoginsIfNeeded();
-    // }
-
-    // Lightweight one-time roster fetch to populate class/race data
-    _refreshRosterClassData().catchError((Object e) {
-      print('[Guild] Warning: Class data refresh failed: $e');
-    });
+    if (_members.isEmpty) {
+      print('[Guild] No cache found. Performing initial fetch...');
+      await _fetchRosterAndMounts();
+      await _refreshLastLogins();
+    } else {
+      _fetchRosterAndMounts().catchError((Object e) {
+        print('[Guild] Warning: Background roster refresh failed: $e');
+      });
+      _refreshLastLoginsIfNeeded();
+    }
 
     _mountSnapshot = _takeMountSnapshot();
     _initialized = true;
-    // _startPolling();
-    // _startDailyLoginRefresh();
-    print('[Guild] Ready (fetch disabled for debugging).');
+    _startPolling();
+    _startDailyLoginRefresh();
+    print('[Guild] Ready.');
   }
 
   /// Fetches the guild roster (single API call) and updates class/race data only.

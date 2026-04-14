@@ -171,12 +171,6 @@ Future<void> _connect(
       final interaction = event.interaction;
       final name = interaction.data.name;
 
-      // Testing safeguard: only respond in the announcements channel
-      if (config.announcementsChannelId != null &&
-          interaction.channelId?.toString() != config.announcementsChannelId) {
-        return;
-      }
-
       switch (name) {
         case 'mounts':
           await mountsCommand.handleSlash(interaction);
@@ -202,12 +196,6 @@ Future<void> _connect(
     client.onMessageCreate.listen((event) async {
       final author = event.message.author;
       if (author is User && author.isBot) return;
-
-      // Testing safeguard: only respond in the announcements channel
-      if (config.announcementsChannelId != null &&
-          event.message.channelId.toString() != config.announcementsChannelId) {
-        return;
-      }
 
       // Check for @mention before lowercasing (IDs are numeric)
       final rawContent = event.message.content;
