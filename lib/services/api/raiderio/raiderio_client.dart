@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:maxeffo_bot/utils/logging_http_client.dart';
 
 class CharacterDetails {
   final int? itemLevelEquipped;
@@ -34,6 +35,11 @@ class RaidProgression {
 class RaiderioClient {
   static const _baseUrl = 'https://raider.io/api/v1';
 
+  final http.Client _httpClient;
+
+  RaiderioClient([http.Client? httpClient])
+      : _httpClient = httpClient ?? LoggingHttpClient();
+
   /// Returns the overall M+ score for the current season.
   /// Returns null if the character has no M+ data or is not found.
   Future<double?> getMplusScore(String region, String realm, String name) async {
@@ -46,7 +52,7 @@ class RaiderioClient {
       },
     );
 
-    final response = await http.get(uri);
+    final response = await _httpClient.get(uri);
 
     if (response.statusCode == 404) return null;
 
@@ -82,7 +88,7 @@ class RaiderioClient {
       },
     );
 
-    final response = await http.get(uri);
+    final response = await _httpClient.get(uri);
     if (response.statusCode == 404) return null;
     if (response.statusCode != 200) {
       throw Exception(
@@ -121,7 +127,7 @@ class RaiderioClient {
       },
     );
 
-    final response = await http.get(uri);
+    final response = await _httpClient.get(uri);
 
     if (response.statusCode == 404) return [];
 

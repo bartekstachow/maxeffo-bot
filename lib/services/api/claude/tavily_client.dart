@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:maxeffo_bot/utils/logging_http_client.dart';
 
 class TavilyClient {
   static const _apiUrl = 'https://api.tavily.com/search';
@@ -16,14 +17,17 @@ class TavilyClient {
   ];
 
   final String _apiKey;
+  final http.Client _httpClient;
 
-  TavilyClient({required String apiKey}) : _apiKey = apiKey;
+  TavilyClient({required String apiKey, http.Client? httpClient})
+      : _apiKey = apiKey,
+        _httpClient = httpClient ?? LoggingHttpClient();
 
   /// Returns a plain-text summary of top search results for Claude to read.
   Future<String> search(String query) async {
     print('[Search] Querying: "$query"');
 
-    final response = await http.post(
+    final response = await _httpClient.post(
       Uri.parse(_apiUrl),
       headers: {'content-type': 'application/json'},
       body: json.encode({

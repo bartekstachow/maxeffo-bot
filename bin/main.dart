@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:loggy/loggy.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:maxeffo_bot/config.dart';
+import 'package:maxeffo_bot/utils/bot_loggy.dart';
 import 'package:maxeffo_bot/services/guild_repository.dart';
 import 'package:maxeffo_bot/services/api/claude/claude_client.dart';
 import 'package:maxeffo_bot/bot/commands/mounts_command.dart';
@@ -17,6 +19,8 @@ import 'package:maxeffo_bot/services/guild_context_repository.dart';
 import 'package:maxeffo_bot/services/api/claude/tavily_client.dart';
 
 void main() async {
+  Loggy.initLoggy(logPrinter: const BotLogPrinter());
+
   final config = Config.load();
 
   final guildService = GuildRepository(config);

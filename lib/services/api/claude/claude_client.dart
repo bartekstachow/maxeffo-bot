@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:maxeffo_bot/services/api/claude/tavily_client.dart';
+import 'package:maxeffo_bot/utils/logging_http_client.dart';
 
 class ClaudeResponse {
   final String text;
@@ -54,10 +55,15 @@ Celuj w 1–3 zdania, chyba że ktoś wyraźnie poprosi o więcej szczegółów.
 
   final String _apiKey;
   final TavilyClient? _searchService;
+  final http.Client _httpClient;
 
-  ClaudeClient({required String apiKey, TavilyClient? searchService})
-      : _apiKey = apiKey,
-        _searchService = searchService;
+  ClaudeClient({
+    required String apiKey,
+    TavilyClient? searchService,
+    http.Client? httpClient,
+  })  : _apiKey = apiKey,
+        _searchService = searchService,
+        _httpClient = httpClient ?? LoggingHttpClient();
 
   /// Standard single-turn reply — no search.
   Future<ClaudeResponse> reply({
@@ -216,7 +222,7 @@ Celuj w 1–3 zdania, chyba że ktoś wyraźnie poprosi o więcej szczegółów.
       body['tools'] = tools;
     }
 
-    final response = await http.post(
+    final response = await _httpClient.post(
       Uri.parse(_apiUrl),
       headers: {
         'x-api-key': _apiKey,

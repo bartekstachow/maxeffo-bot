@@ -4,6 +4,7 @@ import 'package:maxeffo_bot/models/api/guild_roster.dart';
 import 'package:maxeffo_bot/services/api/bnet/bnet_api_service.dart';
 import 'package:maxeffo_bot/services/api/bnet/bnet_converter.dart';
 import 'package:maxeffo_bot/services/api/bnet/interceptors/bnet_auth_interceptor.dart';
+import 'package:maxeffo_bot/services/api/bnet/interceptors/bnet_logging_interceptor.dart';
 import 'package:maxeffo_bot/services/api/bnet/interceptors/bnet_query_interceptor.dart';
 
 /// High-level Battle.net API client.
@@ -22,6 +23,7 @@ class BnetClient {
           clientSecret: config.bnetClientSecret,
         ),
         BnetQueryInterceptor('profile-${config.region}'),
+        BnetLoggingInterceptor(),
       ],
       converter: const BnetConverter(),
     );

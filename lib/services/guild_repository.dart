@@ -55,50 +55,6 @@ class GuildRepository {
     print('[Guild] Ready.');
   }
 
-  /// Fetches the guild roster (single API call) and updates class/race data only.
-  /// Does not touch mount counts or trigger polling.
-  Future<void> _refreshRosterClassData() async {
-    print('[Guild] Refreshing class/race data from roster...');
-    final roster =
-        await _client.getGuildRoster(_config.realmSlug, _config.guildSlug);
-
-    int updated = 0;
-    for (final entry in roster) {
-      final name = entry.character.name;
-      final realmSlug = entry.character.realm.slug;
-      final key = '${name.toLowerCase()}_$realmSlug';
-      final cls = entry.character.playableClass?.name;
-      final race = entry.character.playableRace?.name;
-
-      if (_members.containsKey(key)) {
-        final existing = _members[key]!;
-        if (existing.characterClass == null && cls != null ||
-            existing.characterRace == null && race != null) {
-          _members[key] = existing.copyWith(
-            characterClass: cls ?? existing.characterClass,
-            characterRace: race ?? existing.characterRace,
-            guildRank: entry.rank,
-          );
-          updated++;
-        }
-      } else {
-        // New member not yet in cache
-        _members[key] = GuildMember(
-          name: name,
-          realmSlug: realmSlug,
-          guildRank: entry.rank,
-          characterClass: cls,
-          characterRace: race,
-        );
-        updated++;
-      }
-    }
-
-    await _cacheService.save(_members);
-    print('[Guild] Class data refresh done. Updated $updated member(s).');
-  }
-
-  // ignore: unused_element
   Future<void> _fetchRosterAndMounts() async {
     print('[Guild] Fetching roster for ${_config.guildSlug}@${_config.realmSlug}...');
     final roster =
